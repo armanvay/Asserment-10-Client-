@@ -8,8 +8,8 @@ import {
   LuTrendingUp,
   LuPlus,
 } from "react-icons/lu";
-import Link from "next/link"; // পেজ চেঞ্জ করার জন্য ইম্পোর্ট করা হলো
-import { authClient } from "@/lib/auth-client"; // আপনার অথেনটিকেশন ক্লায়েন্ট
+import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
 
 const WriterDashboardPage = () => {
   // ১. লগইন থাকা ইউজারের সেশন ডাটা নেওয়া
@@ -18,28 +18,36 @@ const WriterDashboardPage = () => {
 
   // স্টেট ম্যানেজমেন্ট
   const [booksData, setBooksData] = useState([]);
-  const [bookmarkCount, setBookmarkCount] = useState(0); // বুকমার্ক কাউন্ট স্টেট
+  const [bookmarkCount, setBookmarkCount] = useState(0);
+  const [salesData, setSalesData] = useState([]); // সেলস ডাটার জন্য নতুন স্টেট
   const [loading, setLoading] = useState(true);
 
-  // ২. ডাটাবেজ থেকে এই নির্দিষ্ট রাইটারের বই এবং বুকমার্কের ডাটা নিয়ে আসা
+  // ২. ডাটাবেজ থেকে রাইটারের বই, বুকমার্ক এবং সেলস ডাটা নিয়ে আসা
   useEffect(() => {
     const fetchDashboardData = async () => {
       if (!user?.email) return;
 
       try {
-        // রাইটারের নিজের বই নিয়ে আসা
+        // ক) রাইটারের নিজের বই নিয়ে আসা
         const booksRes = await fetch(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/my-ebooks/${user.email}`,
         );
-        const booksData = await booksRes.json();
-        setBooksData(booksData);
+        const books = await booksRes.json();
+        setBooksData(books);
 
-        // রাইটারের বুকমার্ক করা বইয়ের সংখ্যা নিয়ে আসা
+        // খ) রাইটারের বুকমার্ক করা বইয়ের সংখ্যা নিয়ে আসা
         const bookmarkRes = await fetch(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/my-bookmarks/${user.email}`,
         );
         const bookmarkData = await bookmarkRes.json();
-        setBookmarkCount(bookmarkData.length); // বুকমার্কের সংখ্যা সেট করা হলো
+        setBookmarkCount(bookmarkData.length);
+
+        // গ) রাইটারের বইগুলোর সেলস হিস্ট্রি নিয়ে আসা (নতুন যুক্ত করা হয়েছে)
+        const salesRes = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/payments/writer/${user.email}`,
+        );
+        const sales = await salesRes.json();
+        setSalesData(sales);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       } finally {
@@ -50,9 +58,19 @@ const WriterDashboardPage = () => {
     fetchDashboardData();
   }, [user?.email]);
 
-  // ডাইনামিক স্ট্যাটাস কার্ডের ভ্যালু
+  // ৩. ডাইনামিক ক্যালকুলেশনসমূহ
   const totalPublishedBooks = booksData.length;
 
+  // totalSales হবে সেলস ডাটার লেন্থ
+  const totalSales = salesData.length;
+
+  // মোট কত টাকা আয় হলো তার যোগফল
+  const totalRevenue = salesData.reduce(
+    (sum, item) => sum + parseFloat(item.price || 0),
+    0,
+  );
+
+  // স্ট্যাটাস কার্ডের অ্যারে আপডেট করা হলো
   const stats = [
     {
       id: 1,
@@ -60,9 +78,24 @@ const WriterDashboardPage = () => {
       value: totalPublishedBooks,
       icon: LuBookOpen,
     },
-    { id: 2, label: "Total Sales", value: "0", icon: LuCoins },
-    { id: 3, label: "Bookmarks", value: bookmarkCount, icon: LuStar }, // বুকমার্কের সংখ্যা এখানে বসানো হয়েছে
-    { id: 4, label: "Revenue", value: "$0.00", icon: LuTrendingUp },
+    {
+      id: 2,
+      label: "Total Sales",
+      value: totalSales, // ডাইনামিক ভ্যালু
+      icon: LuCoins,
+    },
+    {
+      id: 3,
+      label: "Bookmarks",
+      value: bookmarkCount,
+      icon: LuStar,
+    },
+    {
+      id: 4,
+      label: "Revenue",
+      value: `$${totalRevenue.toFixed(2)}`, // ডাইনামিক ভ্যালু
+      icon: LuTrendingUp,
+    },
   ];
 
   const activities = [
@@ -70,6 +103,9 @@ const WriterDashboardPage = () => {
     booksData.length > 0
       ? `You have successfully tracked ${booksData.length} ebooks.`
       : "Start by publishing your very first ebook!",
+    totalSales > 0
+      ? `Great news! You have achieved ${totalSales} sales so far.`
+      : "Waiting for your first book sale. Keep it up!",
   ];
 
   const monthlyData = [30, 40, 45, 60, 50, 70];
@@ -138,7 +174,7 @@ const WriterDashboardPage = () => {
           ))}
         </section>
 
-        {/* QUICK ACTIONS (LINKED TO REAL ROUTES) */}
+        {/* QUICK ACTIONS */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Link
             href="/dashboard/writer/add-ebook"

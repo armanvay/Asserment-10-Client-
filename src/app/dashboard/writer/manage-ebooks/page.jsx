@@ -189,6 +189,7 @@ const ManageBooks = () => {
                   book={book}
                   onEdit={openEditModal}
                   onDelete={handleDelete}
+                  onRefresh={fetchBooks}
                 />
               ))}
             </tbody>

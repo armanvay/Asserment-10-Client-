@@ -15,9 +15,10 @@ const EbookDetailsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // বুকমার্ক স্টেট
+  // বুকমার্ক ও পেমেন্ট স্টেট
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
+  const [paymentLoading, setPaymentLoading] = useState(false); // পেমেন্ট লোডিং স্টেট
 
   // ================= ROLE LOGIC =================
   const isLoggedIn = !!user;
@@ -62,6 +63,48 @@ const EbookDetailsPage = () => {
 
     checkBookmarkStatus();
   }, [user?.email, id]);
+
+  // STRIPE PAYMENT HANDLER (নতুন যুক্ত করা হয়েছে)
+  const handleBuyNow = async () => {
+    if (!isLoggedIn) {
+      alert("Please login first to buy this book!");
+      return;
+    }
+
+    setPaymentLoading(true);
+
+    try {
+      const response = await fetch("/api/checkout_sessions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ebookId: ebook._id,
+          bookTitle: ebook.bookTitle,
+          price: ebook.price,
+          coverImageUrl: ebook.coverImageUrl,
+          writerName: ebook.writerName,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        // স্ট্রাইকের সিকিউর পেমেন্ট পেজে রিডাইরেক্ট করা
+        window.location.href = data.url;
+      } else {
+        alert(
+          data.error || "Something went wrong during checkout initialization.",
+        );
+        setPaymentLoading(false);
+      }
+    } catch (error) {
+      console.error("Payment redirect error:", error);
+      alert("Failed to start payment. Please try again.");
+      setPaymentLoading(false);
+    }
+  };
 
   // বুকমার্ক হ্যান্ডলার ফাংশন
   const handleBookmarkToggle = async () => {
@@ -177,18 +220,23 @@ const EbookDetailsPage = () => {
         <div className="mt-8 flex gap-4">
           {/* BUY BUTTON */}
           <button
-            disabled={!canBuy}
-            className={`px-6 py-3 rounded-xl font-semibold transition
-              ${canBuy ? "bg-green-500 hover:bg-green-600" : "bg-gray-500 cursor-not-allowed"}
+            onClick={handleBuyNow}
+            disabled={!canBuy || paymentLoading}
+            className={`px-6 py-3 rounded-xl font-semibold transition flex items-center justify-center min-w-[160px]
+              ${canBuy && !paymentLoading ? "bg-green-500 hover:bg-green-600 text-white" : "bg-gray-500 cursor-not-allowed text-gray-300"}
             `}
           >
-            {!isLoggedIn
-              ? "Login to Buy"
-              : isWriter
-                ? "You can't buy your own book"
-                : isAdmin
-                  ? "Admin can't buy"
-                  : `Buy Now ($${ebook.price})`}
+            {paymentLoading ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : !isLoggedIn ? (
+              "Login to Buy"
+            ) : isWriter ? (
+              "You can't buy your own book"
+            ) : isAdmin ? (
+              "Admin can't buy"
+            ) : (
+              `Buy Now ($${ebook.price})`
+            )}
           </button>
 
           {/* DYNAMIC BOOKMARK BUTTON */}
