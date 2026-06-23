@@ -20,7 +20,7 @@ const HistoryPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d] text-white p-6 md:p-12 font-sans">
+    <div className="min-h-screen w-screen bg-[#0d0d0d] text-white p-6 md:p-12 font-sans">
       {/* Header Section */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold flex items-center gap-2">

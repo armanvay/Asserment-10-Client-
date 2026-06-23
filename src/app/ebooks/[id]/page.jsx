@@ -9,31 +9,30 @@ import { authClient } from "@/lib/auth-client";
 const EbookDetailsPage = () => {
   const { data: session } = authClient.useSession();
   const user = session?.user;
-
   const { id } = useParams();
 
   const [ebook, setEbook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // বুকমার্ক স্টেট
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [bookmarkLoading, setBookmarkLoading] = useState(false);
+
   // ================= ROLE LOGIC =================
   const isLoggedIn = !!user;
-
   const userRole = user?.role;
-
   const isWriter = userRole === "writer";
   const isAdmin = userRole === "admin";
-
   const canBuy = isLoggedIn && !isWriter && !isAdmin;
 
-  // fetch ebook
+  // Fetch ebook details
   useEffect(() => {
     const fetchEbook = async () => {
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/ebooks/${id}`,
         );
-
         const data = await res.json();
         setEbook(data);
         setLoading(false);
@@ -45,6 +44,67 @@ const EbookDetailsPage = () => {
 
     if (id) fetchEbook();
   }, [id]);
+
+  // বুকমার্ক স্ট্যাটাস চেক করার ইফেক্ট
+  useEffect(() => {
+    const checkBookmarkStatus = async () => {
+      if (!user?.email || !id) return;
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/bookmarks/check?email=${user.email}&ebookId=${id}`,
+        );
+        const data = await res.json();
+        setIsBookmarked(data.isBookmarked);
+      } catch (err) {
+        console.error("Error checking bookmark status:", err);
+      }
+    };
+
+    checkBookmarkStatus();
+  }, [user?.email, id]);
+
+  // বুকমার্ক হ্যান্ডলার ফাংশন
+  const handleBookmarkToggle = async () => {
+    if (!isLoggedIn) {
+      alert("Please login first to bookmark this book!");
+      return;
+    }
+
+    setBookmarkLoading(true);
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/bookmarks/toggle`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userEmail: user.email,
+            ebookId: id,
+            bookTitle: ebook.bookTitle,
+            coverImageUrl: ebook.coverImageUrl,
+            genre: ebook.genre,
+            price: ebook.price,
+          }),
+        },
+      );
+
+      const data = await res.json();
+
+      if (data.success) {
+        setIsBookmarked(data.isBookmarked);
+        alert(data.message);
+      } else {
+        alert("Something went wrong with bookmarking.");
+      }
+    } catch (err) {
+      alert("Failed to update bookmark. Please try again.");
+    } finally {
+      setBookmarkLoading(false);
+    }
+  };
 
   if (loading)
     return (
@@ -77,14 +137,12 @@ const EbookDetailsPage = () => {
         <div className="flex flex-wrap gap-4 text-sm text-gray-400 mt-2">
           <p>📚 Genre: {ebook.genre}</p>
           <p>💰 Price: ${ebook.price}</p>
-
           <p>
             📅 Date:{" "}
             {ebook.createdAt
               ? new Date(ebook.createdAt).toLocaleDateString()
               : "N/A"}
           </p>
-
           <p>
             Status:{" "}
             <span className="text-green-400">{ebook.publishingStatus}</span>
@@ -110,7 +168,6 @@ const EbookDetailsPage = () => {
         {/* CONTENT PREVIEW */}
         <div className="mt-6">
           <h2 className="text-xl font-semibold mb-2">Preview Content</h2>
-
           <div className="bg-[#111] p-4 rounded-lg text-gray-300 whitespace-pre-line max-h-[300px] overflow-y-auto">
             {ebook.ebookContent?.slice(0, 500)}...
           </div>
@@ -122,11 +179,7 @@ const EbookDetailsPage = () => {
           <button
             disabled={!canBuy}
             className={`px-6 py-3 rounded-xl font-semibold transition
-              ${
-                canBuy
-                  ? "bg-green-500 hover:bg-green-600"
-                  : "bg-gray-500 cursor-not-allowed"
-              }
+              ${canBuy ? "bg-green-500 hover:bg-green-600" : "bg-gray-500 cursor-not-allowed"}
             `}
           >
             {!isLoggedIn
@@ -138,9 +191,23 @@ const EbookDetailsPage = () => {
                   : `Buy Now ($${ebook.price})`}
           </button>
 
-          {/* BOOKMARK */}
-          <button className="bg-gray-700 hover:bg-gray-600 px-6 py-3 rounded-xl">
-            ❤️ Bookmark
+          {/* DYNAMIC BOOKMARK BUTTON */}
+          <button
+            onClick={handleBookmarkToggle}
+            disabled={bookmarkLoading}
+            className={`px-6 py-3 rounded-xl transition flex items-center gap-2 font-semibold ${
+              isBookmarked
+                ? "bg-red-600 hover:bg-red-700 text-white"
+                : "bg-gray-700 hover:bg-gray-600 text-gray-200"
+            }`}
+          >
+            {bookmarkLoading ? (
+              <span>Processing...</span>
+            ) : isBookmarked ? (
+              <>❤️ Bookmarked</>
+            ) : (
+              <>🤍 Bookmark</>
+            )}
           </button>
         </div>
       </div>
