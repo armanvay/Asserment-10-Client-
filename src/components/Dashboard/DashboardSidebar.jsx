@@ -29,71 +29,23 @@ const DashboardSidebar = async () => {
   const dashboardItems = {
     user: [
       { icon: BiHome, label: "Overview", path: "/dashboard/user" },
-      {
-        icon: LuHistory,
-        label: "Purchase History",
-        path: "/dashboard/user/purchase-history",
-      },
-      {
-        icon: LuBookOpen,
-        label: "Purchased Ebooks",
-        path: "/dashboard/user/purchased-ebooks",
-      },
-      {
-        icon: LuBookmark,
-        label: "Bookmarked Ebooks",
-        path: "/dashboard/user/bookmarks",
-      },
-      {
-        icon: LuUser,
-        label: "Profile Management",
-        path: "/dashboard/user/profile",
-      },
+      { icon: LuHistory, label: "Purchase History", path: "/dashboard/user/purchase-history" },
+      { icon: LuBookOpen, label: "Purchased Ebooks", path: "/dashboard/user/purchased-ebooks" },
+      { icon: LuBookmark, label: "Bookmarked Ebooks", path: "/dashboard/user/bookmarks" },
+      { icon: LuUser, label: "Profile Management", path: "/dashboard/user/profile" },
     ],
     writer: [
       { icon: BiHome, label: "Overview", path: "/dashboard/writer" },
-      {
-        icon: LuSettings,
-        label: "Manage Ebooks",
-        path: "/dashboard/writer/manage-ebooks",
-      },
-      {
-        icon: LuBellPlus,
-        label: "Add Ebook",
-        path: "/dashboard/writer/add-ebook",
-      },
-      {
-        icon: LuBookmark,
-        label: "Bookmarked Ebooks",
-        path: "/dashboard/writer/bookmarks",
-      },
-      {
-        icon: LuDollarSign,
-        label: "Sales History",
-        path: "/dashboard/writer/sales-history",
-      },
+      { icon: LuSettings, label: "Manage Ebooks", path: "/dashboard/writer/manage-ebooks" },
+      { icon: LuBellPlus, label: "Add Ebook", path: "/dashboard/writer/add-ebook" },
+      { icon: LuBookmark, label: "Bookmarked Ebooks", path: "/dashboard/writer/bookmarks" },
+      { icon: LuDollarSign, label: "Sales History", path: "/dashboard/writer/sales-history" },
     ],
     admin: [
-      {
-        icon: LuLayoutDashboard,
-        label: "Analytics Dashboard",
-        path: "/dashboard/admin",
-      },
-      {
-        icon: LuUsers,
-        label: "Manage Users",
-        path: "/dashboard/admin/manage-users",
-      },
-      {
-        icon: LuBookOpen,
-        label: "Manage All Ebooks",
-        path: "/dashboard/admin/manage-ebooks",
-      },
-      {
-        icon: LuHistory,
-        label: "View All Transactions",
-        path: "/dashboard/admin/transactions",
-      },
+      { icon: LuLayoutDashboard, label: "Analytics Dashboard", path: "/dashboard/admin" },
+      { icon: LuUsers, label: "Manage Users", path: "/dashboard/admin/manage-users" },
+      { icon: LuBookOpen, label: "Manage All Ebooks", path: "/dashboard/admin/manage-ebooks" },
+      { icon: LuHistory, label: "View All Transactions", path: "/dashboard/admin/transactions" },
     ],
   };
 
@@ -105,11 +57,7 @@ const DashboardSidebar = async () => {
       <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-zinc-800 bg-[#0b0b0f]">
         <Image src={logo} alt="Logo" width={100} height={32} />
 
-        <Button
-          variant="secondary"
-          size="sm"
-          className="bg-zinc-900 text-white border border-zinc-700"
-        >
+        <Button variant="secondary" size="sm" className="bg-zinc-900 text-white border border-zinc-700">
           <Bars />
           Menu
         </Button>
@@ -117,6 +65,7 @@ const DashboardSidebar = async () => {
 
       {/* DESKTOP SIDEBAR */}
       <nav className="hidden md:flex flex-col w-64 h-screen sticky top-0 bg-[#0b0b0f] border-r border-zinc-800 p-4">
+        
         {/* LOGO */}
         <div className="mb-8 px-2">
           <Image src={logo} alt="Logo" width={140} height={40} />

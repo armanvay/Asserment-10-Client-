@@ -50,46 +50,54 @@ export default function BannerSlider() {
   }, [emblaApi, onSelect]);
 
   return (
-    <div className="relative mt-3 overflow-hidden rounded-3xl" ref={emblaRef}>
+    /* ব্যাকগ্রাউন্ড পরিবর্তন করে মেইন থিমের bg-[#070708] রাখা হয়েছে */
+    <div
+      className="relative mt-6 overflow-hidden rounded-2xl border border-zinc-800/60 bg-[#070708] shadow-2xl shadow-black/50"
+      ref={emblaRef}
+    >
       <div className="flex">
         {banners.map((banner, index) => (
           <div key={index} className="relative flex-[0_0_100%] min-w-0">
-            <div className="h-[220px] md:h-[350px] lg:h-[450px] w-full">
+            <div className="h-[200px] sm:h-[280px] md:h-[380px] lg:h-[440px] w-full relative">
               <img
                 src={banner}
                 alt={`Banner ${index + 1}`}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover opacity-85 group-hover:scale-102 transition-transform duration-700"
                 loading={index === 0 ? "eager" : "lazy"}
               />
+              {/* ডার্ক থিমের সাথে ম্যাচ করার জন্য ওভারলে গ্রেডিয়েন্ট শ্যাডো */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#070708] via-transparent to-[#070708]/30 mix-blend-multiply opacity-50"></div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Left */}
+      {/* Left Button */}
       <button
         onClick={() => emblaApi?.scrollPrev()}
-        className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/90 p-2 shadow-lg backdrop-blur hover:bg-white"
+        className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-xl bg-zinc-950/40 p-2.5 text-zinc-400 border border-zinc-800/50 shadow-xl backdrop-blur-md hover:bg-zinc-900/80 hover:text-white transition-all active:scale-90"
       >
-        <ChevronLeft size={20} />
+        <ChevronLeft size={18} />
       </button>
 
-      {/* Right */}
+      {/* Right Button */}
       <button
         onClick={() => emblaApi?.scrollNext()}
-        className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/90 p-2 shadow-lg backdrop-blur hover:bg-white"
+        className="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-xl bg-zinc-950/40 p-2.5 text-zinc-400 border border-zinc-800/50 shadow-xl backdrop-blur-md hover:bg-zinc-900/80 hover:text-white transition-all active:scale-90"
       >
-        <ChevronRight size={20} />
+        <ChevronRight size={18} />
       </button>
 
-      {/* Dots */}
-      <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
+      {/* Dots Indicator */}
+      <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-1.5 bg-zinc-950/40 px-3 py-1.5 rounded-full border border-zinc-800/30 backdrop-blur-sm">
         {banners.map((_, index) => (
           <button
             key={index}
             onClick={() => emblaApi?.scrollTo(index)}
-            className={`h-2 rounded-full transition-all duration-300 ${
-              selectedIndex === index ? "w-8 bg-white" : "w-2 bg-white/60"
+            className={`h-1.5 rounded-full transition-all duration-300 ${
+              selectedIndex === index
+                ? "w-6 bg-blue-500"
+                : "w-1.5 bg-zinc-600 hover:bg-zinc-400"
             }`}
           />
         ))}

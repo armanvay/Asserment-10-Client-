@@ -1,180 +1,139 @@
-"use client"
+"use client";
+
+import React from "react";
 import Link from "next/link";
-import Image from "next/image";
-import {
-  Mail,
-  Phone,
-  MapPin,
-} from "lucide-react";
-import { FaFacebook } from "react-icons/fa";
-import { BsInstagram, BsTwitter } from "react-icons/bs";
+// ভুল সংশোধন: Github-এর পরিবর্তে lucide-react এর সঠিক নাম Github ব্যবহার করা হয়েছে
+// import { BookOpen,  Linkedin, Twitter, Mail } from "lucide-react";
+import { GiThunderBlade, GiThunderSkull } from "react-icons/gi";
+import { BookOpen, Mail } from "lucide-react";
 import { LiaLinkedin } from "react-icons/lia";
-import { usePathname } from "next/navigation";
+import { BsTwitter } from "react-icons/bs";
 
-
-export default function Footer() {
-
-
-  const pathname =usePathname();
-  if(pathname.includes("/dashboard")){
-    return null;
-  }
-
-
-
-
+const Footer = () => {
   return (
-    <footer className="mt-16 border-t bg-background">
-      <div className="container mx-auto px-4">
-        <div className="grid gap-10 py-12 md:grid-cols-2 lg:grid-cols-4">
-          {/* Brand */}
-          <div>
-            <Link href="/" className="inline-block">
-              <Image
-                src="/logo-xl.png"
-                alt="Logo"
-                width={180}
-                height={50}
-                className="h-12 w-auto"
-              />
+    <footer className="w-full bg-[#09090b] border-t border-zinc-900 text-zinc-400 font-sans mt-auto">
+      <div className="max-w-7xl mx-auto px-6 py-10 md:py-14">
+        {/* Top Section */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-10">
+          {/* Logo & Description */}
+          <div className="md:col-span-2 space-y-4">
+            <Link
+              href="/"
+              className="flex items-center gap-2 text-white font-bold text-xl"
+            >
+              <div className="bg-blue-600 p-1.5 rounded-lg text-white">
+                <BookOpen size={18} />
+              </div>
+              <span>Ebook</span>
             </Link>
-
-            <p className="mt-4 text-sm text-muted-foreground">
-              Discover quality products at great prices. Fast delivery,
-              secure payments, and exceptional customer service.
+            <p className="text-sm text-zinc-500 max-w-sm leading-relaxed">
+              Discover, read, and publish your favorite ebooks instantly. A
+              modern platform built for passionate readers and writers.
             </p>
-
-            <div className="mt-5 flex items-center gap-3">
-              <Link
-                href="#"
-                className="rounded-full border p-2 transition hover:bg-muted"
-              >
-                <FaFacebook className="h-4 w-4" />
-              </Link>
-              <Link
-                href="#"
-                className="rounded-full border p-2 transition hover:bg-muted"
-              >
-                <BsInstagram className="h-4 w-4" />
-              </Link>
-              <Link
-                href="#"
-                className="rounded-full border p-2 transition hover:bg-muted"
-              >
-                <BsTwitter className="h-4 w-4" />
-              </Link>
-              <Link
-                href="#"
-                className="rounded-full border p-2 transition hover:bg-muted"
-              >
-                <LiaLinkedin className="h-4 w-4" />
-              </Link>
-            </div>
           </div>
 
-          {/* Shop */}
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">
-              Shop
-            </h3>
-
-            <ul className="space-y-3 text-sm text-muted-foreground">
+          {/* Quick Links */}
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold text-zinc-200 uppercase tracking-wider">
+              Quick Links
+            </h4>
+            <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/products" className="hover:text-foreground">
-                  All Products
+                <Link
+                  href="/ebooks"
+                  className="hover:text-white transition-colors"
+                >
+                  Explore Ebooks
                 </Link>
               </li>
               <li>
-                <Link href="/categories" className="hover:text-foreground">
-                  Categories
+                <Link
+                  href="/dashboard/writer/add-ebook"
+                  className="hover:text-white transition-colors"
+                >
+                  Publish Book
                 </Link>
               </li>
               <li>
-                <Link href="/new-arrivals" className="hover:text-foreground">
-                  New Arrivals
-                </Link>
-              </li>
-              <li>
-                <Link href="/best-selling" className="hover:text-foreground">
-                  Best Selling
+                <Link
+                  href="/dashboard"
+                  className="hover:text-white transition-colors"
+                >
+                  Dashboard
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Support */}
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">
-              Support
-            </h3>
-
-            <ul className="space-y-3 text-sm text-muted-foreground">
-              <li>
-                <Link href="/contact" className="hover:text-foreground">
-                  Contact Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/faq" className="hover:text-foreground">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacy-policy" className="hover:text-foreground">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="hover:text-foreground">
-                  Terms & Conditions
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider">
-              Contact
-            </h3>
-
-            <div className="space-y-4 text-sm text-muted-foreground">
-              <div className="flex gap-3">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
-                <span>Dhaka, Bangladesh</span>
-              </div>
-
-              <div className="flex gap-3">
-                <Phone className="h-4 w-4 shrink-0" />
-                <span>+880 1234-567890</span>
-              </div>
-
-              <div className="flex gap-3">
-                <Mail className="h-4 w-4 shrink-0" />
-                <span>support@example.com</span>
-              </div>
+          {/* Contact & Socials */}
+          <div className="space-y-3">
+            <h4 className="text-sm font-semibold text-zinc-200 uppercase tracking-wider">
+              Connect With Us
+            </h4>
+            <div className="flex items-center gap-3 text-zinc-500">
+              <a
+                href="https://github.com/armanvay"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-white transition-colors"
+                title="GitHub"
+              >
+                {/* সঠিক আইকন ট্যাগ */}
+                <GiThunderSkull size={18} />
+              </a>
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-white transition-colors"
+                title="LinkedIn"
+              >
+                <LiaLinkedin size={18} />
+              </a>
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:text-white transition-colors"
+                title="Twitter"
+              >
+                <BsTwitter size={18} />
+              </a>
+              <a
+                href="mailto:support@ejanala.com"
+                className="hover:text-white transition-colors"
+                title="Email"
+              >
+                <Mail size={18} />
+              </a>
             </div>
+            <p className="text-xs text-zinc-600 pt-1">
+              Need help? support@ejanala.com
+            </p>
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-between gap-3 border-t py-6 text-center text-sm text-muted-foreground md:flex-row">
-          <p>
-            © {new Date().getFullYear()} Your Store. All rights reserved.
-          </p>
-
-          <div className="flex items-center gap-4">
-            <Link href="/privacy-policy" className="hover:text-foreground">
-              Privacy
+        {/* Bottom Section */}
+        <div className="border-t border-zinc-900/80 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-600">
+          <p>© {new Date().getFullYear()} E-Janala. All rights reserved.</p>
+          <div className="flex gap-4">
+            <Link
+              href="/privacy"
+              className="hover:text-zinc-400 transition-colors"
+            >
+              Privacy Policy
             </Link>
-            <Link href="/terms" className="hover:text-foreground">
-              Terms
-            </Link>
-            <Link href="/cookies" className="hover:text-foreground">
-              Cookies
+            <Link
+              href="/terms"
+              className="hover:text-zinc-400 transition-colors"
+            >
+              Terms of Service
             </Link>
           </div>
         </div>
       </div>
     </footer>
   );
-}
+};
+
+export default Footer;
