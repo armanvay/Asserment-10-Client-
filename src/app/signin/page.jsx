@@ -40,12 +40,16 @@ export default function SignInPage() {
     }
   };
 
+  // গুগল লগইনের জন্য নতুন ফাংশন যোগ করা হলো
   const handleGoogleLogin = async () => {
-    await authClient.signIn.social({
-      provider: "google",
-      callbackURL: "/",
-    });
-    toast.success("Login successful 🎉");
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/", // লগইন সফল হওয়ার পর যেখানে রিডাইরেক্ট হবে
+      });
+    } catch (error) {
+      toast.error("Google login failed ❌");
+    }
   };
 
   return (
